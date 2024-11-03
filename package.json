@@ -17,6 +17,9 @@
     "email": "minarmunshi46@gmail.com",
     "url": "https://github.com/itsMinar"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"

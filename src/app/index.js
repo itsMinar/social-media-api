@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const morganMiddleware = require('../logger/morgan.logger.js');
-const CustomError = require('../utils/Error.js');
-const errorMiddleware = require('../middlewares/error.middleware.js');
+const morganMiddleware = require('../logger/morgan.logger');
+const CustomError = require('../utils/Error');
+const errorMiddleware = require('../middlewares/error.middleware');
 
 // initialize express app
 const app = express();
@@ -32,7 +32,7 @@ app.get('/health', (_req, res) => {
 });
 
 // routes import
-const authRouter = require('../routes/user.routes.js');
+const authRouter = require('../routes/user.routes');
 
 // routes declaration
 app.use('/api/v1/auth', authRouter);

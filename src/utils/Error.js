@@ -2,9 +2,7 @@ const formatError = (err) => {
   const error = {
     message: err?.message ? err.message : err.toString(),
     errors: err.errors || [],
-    hints: err.hints
-      ? `${err.hints}. If the problem is not resolved, please feel free to contact our technical team.`
-      : 'Please contact our technical team.',
+    hints: err.hints ? err.hints : 'Please contact our technical team.',
   };
 
   return error;
