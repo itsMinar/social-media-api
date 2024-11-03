@@ -1,5 +1,7 @@
 const { Schema, model, models } = require('mongoose');
-const { randomUUID } = require('crypto');
+const { v4: uuid } = require('uuid');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new Schema(
   {
@@ -72,7 +74,7 @@ userSchema.pre('validate', async function (next) {
     let isUnique = false;
 
     while (!isUnique) {
-      uniqueUsername = `user-${randomUUID()}`; // TODO: will use another id generator package
+      uniqueUsername = `user-${uuid().slice(0, 8)}`;
       const existingUser = await models.User.findOne({
         username: uniqueUsername,
       });
@@ -86,6 +88,43 @@ userSchema.pre('validate', async function (next) {
     next(err);
   }
 });
+
+// Pre-save hook to hash the password before store in DB
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+// Custom method to compare plain password with the hashed password in the user document
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+// Custom method to generate access token
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      username: this.username,
+      role: this.role,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+  );
+};
+
+// Custom method to generate refresh token
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+  );
+};
 
 const User = model('User', userSchema);
 

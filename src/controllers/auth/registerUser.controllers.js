@@ -1,9 +1,11 @@
 const { User } = require('../../models/user.models');
 const { registerUserSchema } = require('../../schemas/user.schemas');
+const { ApiResponse } = require('../../utils/ApiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
 const CustomError = require('../../utils/Error');
 
 const registerUser = asyncHandler(async (req, res, next) => {
+  // validate the request
   const parsedBody = registerUserSchema.safeParse(req.body);
 
   if (!parsedBody.success) {
@@ -31,7 +33,28 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   const user = await User.create({ ...parsedBody.data });
 
-  return res.json({ message: 'all good', user });
+  const createdUser = await User.findById(user._id).select(
+    'firstName lastName email username gender'
+  );
+
+  if (!createdUser) {
+    const error = CustomError.serverError({
+      message: 'Something went wrong while registering the user',
+      errors: ['User creation failed. Please try again later.'],
+    });
+
+    return next(error);
+  }
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        { user: createdUser },
+        'User Registered Successfully'
+      )
+    );
 });
 
 module.exports = registerUser;
