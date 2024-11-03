@@ -3,6 +3,7 @@ const { ApiResponse } = require('../../utils/ApiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
 const CustomError = require('../../utils/Error');
 
+// TODO: will complete later
 const getProfileByUsername = asyncHandler(async (req, res, next) => {
   const { username } = req.params;
 

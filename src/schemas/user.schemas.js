@@ -63,6 +63,15 @@ const loginUserSchema = z.object({
     .min(6, 'Password must be at least 6 characters'),
 });
 
+const changePasswordSchema = z.object({
+  oldPassword: z
+    .string({ message: 'oldPassword is required' })
+    .min(6, 'Old password must be at least 6 characters'),
+  newPassword: z
+    .string({ message: 'newPassword is required' })
+    .min(6, 'New password must be at least 6 characters'),
+});
+
 const updateProfileSchema = registerUserSchema
   .omit({
     email: true,
@@ -80,6 +89,7 @@ const updateUsernameSchema = z.object({
 module.exports = {
   registerUserSchema,
   loginUserSchema,
+  changePasswordSchema,
   updateProfileSchema,
   updateUsernameSchema,
 };
