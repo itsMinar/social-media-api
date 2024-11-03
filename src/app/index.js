@@ -32,10 +32,12 @@ app.get('/health', (_req, res) => {
 });
 
 // routes import
-const authRouter = require('../routes/user.routes');
+const authRouter = require('../routes/auth.routes');
+const profileRouter = require('../routes/profile.routes');
 
 // routes declaration
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/profile', profileRouter);
 
 // Not Found Handler
 app.use((_req, res) => {
