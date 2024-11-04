@@ -24,8 +24,8 @@ const changePassword = asyncHandler(async (req, res, next) => {
   if (!user) {
     const error = CustomError.notFound({
       message: 'User not found!',
-      errors: ['No user found with the provided email or username'],
-      hints: 'Please check the email or username and try again',
+      errors: ['Token is not valid'],
+      hints: 'Please check the token and try again',
     });
 
     return next(error);

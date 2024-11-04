@@ -69,6 +69,8 @@ const userSchema = new Schema(
 
 // Pre-validate hook to auto-generate a unique username
 userSchema.pre('validate', async function (next) {
+  if (this.username) next();
+
   try {
     let uniqueUsername;
     let isUnique = false;

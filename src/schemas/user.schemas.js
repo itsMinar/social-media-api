@@ -79,7 +79,7 @@ const updateProfileSchema = registerUserSchema
   })
   .partial();
 
-const updateUsernameSchema = z.object({
+const changeUsernameSchema = z.object({
   username: z
     .string({ message: 'username is required' })
     .min(2, 'username must be at least 2 character')
@@ -91,5 +91,5 @@ module.exports = {
   loginUserSchema,
   changePasswordSchema,
   updateProfileSchema,
-  updateUsernameSchema,
+  changeUsernameSchema,
 };
