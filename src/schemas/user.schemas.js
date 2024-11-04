@@ -14,17 +14,30 @@ const registerUserSchema = z.object({
   password: z
     .string({ message: 'password is required' })
     .min(6, 'password must be at least 6 characters'),
-  dob: z
-    .preprocess(
-      (arg) => {
-        if (typeof arg === 'string' || arg instanceof Date) {
-          return new Date(arg);
-        }
-        return arg;
+  dob: z.preprocess(
+    (arg) => {
+      if (typeof arg === 'string' || arg instanceof Date) {
+        return new Date(arg);
+      }
+      return arg;
+    },
+    z.date({ message: 'dob is required and must be a valid Date' }).refine(
+      (date) => {
+        const today = new Date();
+        const age = today.getFullYear() - date.getFullYear();
+        const monthDifference = today.getMonth() - date.getMonth();
+        const dayDifference = today.getDate() - date.getDate();
+
+        return (
+          age > 13 ||
+          (age === 13 &&
+            (monthDifference > 0 ||
+              (monthDifference === 0 && dayDifference >= 0)))
+        );
       },
-      z.date({ message: 'dob must a valid Date' })
+      { message: 'User must be at least 13 years old' }
     )
-    .optional(),
+  ),
   gender: z.preprocess(
     (val) => {
       if (typeof val === 'string') {
@@ -32,16 +45,11 @@ const registerUserSchema = z.object({
       }
       return val;
     },
-    z.enum(['male', 'female'], {
+    z.enum(['male', 'female', 'others'], {
       required_error: 'Gender is required',
-      message: 'Gender must be either male or female',
+      message: 'Gender must be either male or female or others',
     })
   ),
-  bio: z.string({ message: 'bio must be string' }).optional(),
-  location: z.string({ message: 'location must be string' }).optional(),
-  countryCode: z.string({ message: 'countryCode must be string' }).optional(),
-  phoneNumber: z.string({ message: 'phoneNumber must be string' }).optional(),
-  refreshToken: z.string({ message: 'refreshToken must be string' }).optional(),
 });
 
 const loginUserSchema = z.object({
@@ -73,9 +81,17 @@ const changePasswordSchema = z.object({
 });
 
 const updateProfileSchema = registerUserSchema
-  .omit({
-    email: true,
-    password: true,
+  .pick({
+    firstName: true,
+    lastName: true,
+    dob: true,
+    gender: true,
+  })
+  .extend({
+    bio: z.string({ message: 'bio must be string' }),
+    location: z.string({ message: 'location must be string' }),
+    countryCode: z.string({ message: 'countryCode must be string' }),
+    phoneNumber: z.string({ message: 'phoneNumber must be string' }),
   })
   .partial();
 
