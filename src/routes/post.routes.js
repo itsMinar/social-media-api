@@ -7,12 +7,13 @@ const getPostsByUsername = require('../controllers/post/getPostsByUsername.contr
 const updatePost = require('../controllers/post/updatePost.controllers');
 
 const { verifyJWT } = require('../middlewares/auth.middleware');
+const { validateMongoId } = require('../middlewares/validate.middleware');
 
 const router = require('express').Router();
 
 // Public routes
 router.route('/').get(getAllPosts);
-router.route('/:postId').get(getPostById);
+router.route('/:postId').get(validateMongoId('postId'), getPostById);
 router.route('/get/u/:username').get(getPostsByUsername);
 
 // make rest of the request protected
@@ -21,7 +22,10 @@ router.use(verifyJWT);
 // Private routes
 router.route('/').post(createPost);
 router.route('/get/my').get(getMyPosts);
-router.route('/:postId').patch(updatePost).delete(deletePost);
+router
+  .route('/:postId')
+  .patch(validateMongoId('postId'), updatePost)
+  .delete(validateMongoId('postId'), deletePost);
 
 // export router
 module.exports = router;
