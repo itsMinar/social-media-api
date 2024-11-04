@@ -1,15 +1,15 @@
+const { Comment } = require('../../models/comment.models');
 const { Post } = require('../../models/post.models');
 const { ApiResponse } = require('../../utils/ApiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
 const CustomError = require('../../utils/Error');
 
-const deletePost = asyncHandler(async (req, res, next) => {
+const getPostComments = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
 
-  // find the post and delete it
-  const deletedPost = await Post.findByIdAndDelete(postId);
+  const post = await Post.findById(postId);
 
-  if (!deletedPost) {
+  if (!post) {
     const error = CustomError.notFound({
       message: 'Post not found!',
       errors: ['No post found with the provided id'],
@@ -19,9 +19,11 @@ const deletePost = asyncHandler(async (req, res, next) => {
     return next(error);
   }
 
+  const comments = await Comment.find({ postId: post._id });
+
   return res
     .status(200)
-    .json(new ApiResponse(200, null, 'Post Deleted Successfully'));
+    .json(new ApiResponse(200, comments, 'Post Comments Fetched Successfully'));
 });
 
-module.exports = deletePost;
+module.exports = getPostComments;

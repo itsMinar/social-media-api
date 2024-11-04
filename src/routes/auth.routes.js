@@ -2,7 +2,6 @@ const changePassword = require('../controllers/auth/changePassword.controllers')
 const loginUser = require('../controllers/auth/loginUser.controllers');
 const logoutUser = require('../controllers/auth/logoutUser.controllers');
 const registerUser = require('../controllers/auth/registerUser.controllers');
-
 const { verifyJWT } = require('../middlewares/auth.middleware');
 
 const router = require('express').Router();

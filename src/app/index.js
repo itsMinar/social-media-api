@@ -35,11 +35,13 @@ app.get('/health', (_req, res) => {
 const authRouter = require('../routes/auth.routes');
 const profileRouter = require('../routes/profile.routes');
 const postRouter = require('../routes/post.routes');
+const commentRouter = require('../routes/comment.routes');
 
 // routes declaration
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/profile', profileRouter);
 app.use('/api/v1/posts', postRouter);
+app.use('/api/v1/comments', commentRouter);
 
 // Not Found Handler
 app.use((_req, res) => {

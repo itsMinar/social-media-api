@@ -1,7 +1,6 @@
 const changeUsername = require('../controllers/profile/changeUsername.controllers');
 const getProfileByUsername = require('../controllers/profile/getProfileByUsername');
 const updateProfile = require('../controllers/profile/updateProfile.controllers');
-
 const { verifyJWT } = require('../middlewares/auth.middleware');
 
 const router = require('express').Router();

@@ -5,7 +5,6 @@ const getMyPosts = require('../controllers/post/getMyPosts.controllers');
 const getPostById = require('../controllers/post/getPostById.controllers');
 const getPostsByUsername = require('../controllers/post/getPostsByUsername.controllers');
 const updatePost = require('../controllers/post/updatePost.controllers');
-
 const { verifyJWT } = require('../middlewares/auth.middleware');
 const { validateMongoId } = require('../middlewares/validate.middleware');
 
