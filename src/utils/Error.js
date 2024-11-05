@@ -49,6 +49,14 @@ class CustomError {
     };
   }
 
+  static unprocessableEntity(error) {
+    const err = formatError(error);
+    return {
+      status: 422,
+      ...err,
+    };
+  }
+
   static serverError(error) {
     const err = formatError(error);
     return {

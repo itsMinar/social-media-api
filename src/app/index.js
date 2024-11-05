@@ -37,6 +37,7 @@ const profileRouter = require('../routes/profile.routes');
 const postRouter = require('../routes/post.routes');
 const commentRouter = require('../routes/comment.routes');
 const likeRouter = require('../routes/like.routes');
+const followRouter = require('../routes/follow.routes');
 
 // routes declaration
 app.use('/api/v1/auth', authRouter);
@@ -44,6 +45,7 @@ app.use('/api/v1/profile', profileRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/like', likeRouter);
+app.use('/api/v1/follow', followRouter);
 
 // Not Found Handler
 app.use((_req, res) => {
