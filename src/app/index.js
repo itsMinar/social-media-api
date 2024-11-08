@@ -3,7 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const morganMiddleware = require('../logger/morgan.logger');
 const CustomError = require('../utils/Error');
-const errorMiddleware = require('../middlewares/error.middleware');
+const { errorMiddleware } = require('../middlewares/error.middleware');
 
 // initialize express app
 const app = express();

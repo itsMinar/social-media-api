@@ -59,6 +59,14 @@ const userSchema = new Schema(
       type: String,
       default: '',
     },
+    profilePhoto: {
+      type: String,
+      default: 'https://placehold.co/200x200',
+    },
+    coverPhoto: {
+      type: String,
+      default: 'https://placehold.co/800x450',
+    },
     refreshToken: {
       type: String,
       default: '',
