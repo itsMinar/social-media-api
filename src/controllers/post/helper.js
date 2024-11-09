@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const postCommonAggregation = (userId) => {
+const postCommonAggregation = (req) => {
   return [
     {
       $lookup: {
@@ -27,7 +27,7 @@ const postCommonAggregation = (userId) => {
         pipeline: [
           {
             $match: {
-              likedBy: new mongoose.Types.ObjectId(userId),
+              likedBy: new mongoose.Types.ObjectId(req?.user?._id),
             },
           },
         ],
@@ -37,27 +37,16 @@ const postCommonAggregation = (userId) => {
       $lookup: {
         from: 'users',
         localField: 'author',
-        foreignField: 'owner',
+        foreignField: '_id',
         as: 'author',
         pipeline: [
           {
-            $lookup: {
-              from: 'users',
-              localField: 'owner',
-              foreignField: '_id',
-              as: 'account',
-              pipeline: [
-                {
-                  $project: {
-                    avatar: 1,
-                    email: 1,
-                    username: 1,
-                  },
-                },
-              ],
+            $project: {
+              profilePhoto: 1,
+              email: 1,
+              username: 1,
             },
           },
-          { $addFields: { account: { $first: '$account' } } },
         ],
       },
     },

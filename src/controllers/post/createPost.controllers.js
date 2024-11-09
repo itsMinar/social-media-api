@@ -61,7 +61,7 @@ const createPost = asyncHandler(async (req, res, next) => {
         _id: post._id,
       },
     },
-    ...postCommonAggregation(req.user._id),
+    ...postCommonAggregation(req),
   ]);
 
   return res
