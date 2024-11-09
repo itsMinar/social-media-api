@@ -2,8 +2,8 @@ const { User } = require('../../models/user.models');
 const { ApiResponse } = require('../../utils/ApiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
 const CustomError = require('../../utils/Error');
+const { getUserProfile } = require('./helper');
 
-// TODO: will complete later
 const getProfileByUsername = asyncHandler(async (req, res, next) => {
   const { username } = req.params;
 
@@ -21,9 +21,13 @@ const getProfileByUsername = asyncHandler(async (req, res, next) => {
     return next(error);
   }
 
+  const userProfile = await getUserProfile(user._id, req);
+
   return res
     .status(200)
-    .json(new ApiResponse(200, user, 'User profile fetched successfully'));
+    .json(
+      new ApiResponse(200, userProfile, 'User profile fetched successfully')
+    );
 });
 
 module.exports = getProfileByUsername;

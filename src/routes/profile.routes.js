@@ -1,6 +1,7 @@
 const changeCoverPhoto = require('../controllers/profile/changeCoverPhoto.controllers');
 const changeProfilePhoto = require('../controllers/profile/changeProfilePhoto.controllers');
 const changeUsername = require('../controllers/profile/changeUsername.controllers');
+const getMyProfile = require('../controllers/profile/getMyProfile.controllers');
 const getProfileByUsername = require('../controllers/profile/getProfileByUsername');
 const updateProfile = require('../controllers/profile/updateProfile.controllers');
 const { verifyJWT } = require('../middlewares/auth.middleware');
@@ -15,6 +16,7 @@ router.route('/u/:username').get(getProfileByUsername);
 router.use(verifyJWT);
 
 // Private routes
+router.route('/').get(getMyProfile);
 router.route('/change-username').patch(changeUsername);
 router.route('/').patch(updateProfile);
 router
