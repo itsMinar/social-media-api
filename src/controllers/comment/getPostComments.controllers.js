@@ -1,10 +1,13 @@
+const mongoose = require('mongoose');
 const { Comment } = require('../../models/comment.models');
 const { Post } = require('../../models/post.models');
 const { ApiResponse } = require('../../utils/ApiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
 const CustomError = require('../../utils/Error');
+const { getMongoosePaginationOptions } = require('../../utils/helpers');
 
 const getPostComments = asyncHandler(async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
   const { postId } = req.params;
 
   const post = await Post.findById(postId);
@@ -19,7 +22,87 @@ const getPostComments = asyncHandler(async (req, res, next) => {
     return next(error);
   }
 
-  const comments = await Comment.find({ postId: post._id });
+  const commentAggregation = Comment.aggregate([
+    {
+      $match: {
+        postId: new mongoose.Types.ObjectId(postId),
+      },
+    },
+    {
+      $lookup: {
+        from: 'likes',
+        localField: '_id',
+        foreignField: 'commentId',
+        as: 'likes',
+      },
+    },
+    {
+      $lookup: {
+        from: 'likes',
+        localField: '_id',
+        foreignField: 'commentId',
+        as: 'isLiked',
+        pipeline: [
+          {
+            $match: {
+              likedBy: new mongoose.Types.ObjectId(req?.user?._id),
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'author',
+        pipeline: [
+          {
+            $project: {
+              profilePhoto: 1,
+              username: 1,
+              firstName: 1,
+              lastName: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        author: { $first: '$author' },
+        likes: { $size: '$likes' },
+        isLiked: {
+          $cond: {
+            if: {
+              $gte: [
+                {
+                  // if the isLiked key has document in it
+                  $size: '$isLiked',
+                },
+                1,
+              ],
+            },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+  ]);
+
+  const comments = await Comment.aggregatePaginate(
+    commentAggregation,
+    getMongoosePaginationOptions({
+      page,
+      limit,
+      customLabels: {
+        totalDocs: 'totalComments',
+        docs: 'comments',
+      },
+    })
+  );
 
   return res
     .status(200)
