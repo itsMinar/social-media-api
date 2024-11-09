@@ -1,3 +1,5 @@
 const DB_NAME = 'social-media-api';
 
-module.exports = { DB_NAME };
+const MAXIMUM_POST_PHOTO_COUNT = 4;
+
+module.exports = { DB_NAME, MAXIMUM_POST_PHOTO_COUNT };
